@@ -12,7 +12,8 @@ distributions provided with Mac OS X 10.6.
 
 ### Upgrade RubyGems
 
-The `liquid` gem requires RubyGems 1.3.7 or higher.  Download the
+The [liquid](http://www.liquidmarkup.org/) gem requires RubyGems 1.3.7 or
+higher.  Download the
 [newest RubyGems version](http://rubyforge.org/frs/?group_id=126), untar the
 archive, then run
 
@@ -32,7 +33,7 @@ I want to use [RDiscount](http://github.com/rtomayko/rdiscount/) instead of
 
     sudo gem install rdiscount
 
-Configure the markdown processor in the `_config.yml` file:
+Configure the markdown processor by adding this line in the `_config.yml` file:
 
     markdown: rdiscount
 
