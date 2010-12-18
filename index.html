@@ -3,11 +3,9 @@ layout: default
 title: Software Developer's Notebook
 ---
 
-<div id="home">
-  <h1>Posts</h1>
-  <ul class="posts">
-    {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
+<div class="posttitle">
+  <div class="byline">{{ site.posts.first.date | date_to_string }}</div>
+  <h2><a href="{{ site.posts.first.url }}">{{ site.posts.first.title }}</a></h2>
 </div>
+
+{{ site.posts.first.content }} 
