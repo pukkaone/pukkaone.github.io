@@ -9,11 +9,19 @@ About dialog.  Subsequent releases should have increasing build numbers (but
 the build numbers don't have to be contiguous), so you can say to a customer,
 "If you have build number *N* or higher, then you have the fix to that bug."
 
-If your source code is in [Subversion](http://subversion.apache.org/),
-then an obvious choice for the build number is the repository revision number
-checked out to build the release.  Getting a build number
-from [Git](http://git-scm.com/) is not so obvious.  I'm going to outline a
-scheme using the
+A commit to [Subversion](http://subversion.apache.org/) increments the
+repository revision number which identifies the state of the repository after
+applying the changes.  If your source code is in Subversion, an obvious choice
+for the build number is the repository revision number checked out to build the
+release.
+
+Deriving a build number from [Git](http://git-scm.com/) is not so obvious.  The
+SHA-1 hash Git uses to identify each commit does not have a naturally ordering.
+You can't tell just by looking at the SHA-1 hashes of two commits which commit
+comes after the other.  So using the SHA-1 hash as the build number doesn't
+make sense.
+
+I'm going to outline a scheme using the
 [git describe](http://www.kernel.org/pub/software/scm/git/docs/git-describe.html)
 command, which counts how many commits are traversed to reach a tag.  Create a
 tag pointing to some commit in the history.  A likely candidate is the first
@@ -22,7 +30,7 @@ the current commit and the tag.  To guarantee an increasing build number, all
 these conditions must be satisfied:
 
  1. Make all releases from the same Git repository.
- 1. Make all releases from the same branch (master in my case).
+ 1. Make all releases from the same branch.
  1. Do not rewrite history. 
 
 Create a tag named `build` pointing to the first commit in the repository:
