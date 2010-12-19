@@ -15,7 +15,7 @@ checked out to build the release.  Getting a build number
 from [Git](http://git-scm.com/) is not so obvious.  I'm going to outline a
 scheme using the
 [git describe](http://www.kernel.org/pub/software/scm/git/docs/git-describe.html)
-command, which counts how many commits are tranversed to reach a tag.  Create a
+command, which counts how many commits are traversed to reach a tag.  Create a
 tag pointing to some commit in the history.  A likely candidate is the first
 commit in the repository.  The build number is the number of commits between
 the current commit and the tag.  To guarantee an increasing build number, all
