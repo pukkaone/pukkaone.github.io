@@ -7,7 +7,7 @@ body {
     color: black;
     text-align: center;
     font-size: 13px;
-    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+    font-family: "Lucida Grande", Calibri, Verdana, Arial, sans-serif;
 }
 
 img#wpstats { width:0px; height:0px; overflow:hidden; }
