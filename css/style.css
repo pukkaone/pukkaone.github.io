@@ -6,7 +6,7 @@ body {
     background: white;
     color: black;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 }
 
@@ -45,7 +45,6 @@ pre {
 
 code {
     font-family: Consolas, Menlo, monospace;
-    font-size: 13px;
 }
 
 ul {
@@ -81,7 +80,7 @@ h4 {
     text-align: center;
     margin: 0 auto;
     padding: 0;
-    width: 800px;
+    width: 700px;
 }
 
 /* HEADER */
@@ -121,19 +120,19 @@ h4 {
 .post {
     padding-top: 1em;
     text-align: left;
-    width: 800px;
+    width: 700px;
 }
 
 .postnoline {
     padding:18px 0 0 0;
     text-align:left;
-    width: 800px;
+    width: 700px;
 }
 
 .postcomment {
     padding:18px 0 0 0;
     text-align:left;
-    width: 800px;
+    width: 700px;
     font-size:11px;
     color:#666;
 }
@@ -183,7 +182,7 @@ span.edit a {
 
 .previously {
     text-align:left;
-    width: 800px;
+    width: 700px;
     padding: 20px 0 3px 0;
     border-top: 1px solid #ccc;
     font-size: 12px;
