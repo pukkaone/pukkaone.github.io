@@ -24,8 +24,8 @@ request.
 
 A
 [custom servlet context listener](http://github.com/pukkaone/jsptools/blob/master/src/com/github/pukkaone/jsp/JspCompileListener.java)
-implementation compiles all JSPs in the Web application when
-the application starts.  To use it, define a listener in the `web.xml` file:
+compiles all JSPs in the Web application when the application starts.  To use
+it, define a listener in the `web.xml` file:
 
 {% highlight xml %}
 <listener>
