@@ -89,15 +89,16 @@ It recursively descends into subdirectories and processes JSPs found there.
     }
 {% endhighlight %}
 
-The RequestDispatcher sends a request to a JSP.  The
-[ServletRequest](http://download.oracle.com/javaee/6/api/javax/servlet/ServletRequest.html)
-argument passed to the
+The call to the
 [RequestDispatcher.include](http://download.oracle.com/javaee/6/api/javax/servlet/RequestDispatcher.html#include(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
-sets the query string to `jsp_precompile`.  The ServletRequest interface defines
-many methods.  Instead of writing a class providing empty implementions for
-those methods, creating a JDK dynamic proxy that implements the interface is
-more concise.
-Another JDK dynamic proxy implements the
+method sends a request to a JSP.  One of the arguments must be a
+[ServletRequest](http://download.oracle.com/javaee/6/api/javax/servlet/ServletRequest.html)
+implementation that returns `jsp_precompile` for the query string.  I could
+have written a class providing empty implementations for the ServletRequest
+methods, but the interface has so many methods that the code to create a
+[JDK dynamic proxy](http://download.oracle.com/javase/6/docs/api/java/lang/reflect/Proxy.html)
+implementing the interface is more concise.  Another JDK dynamic proxy
+implements the
 [ServletResponse](http://download.oracle.com/javaee/6/api/javax/servlet/ServletResponse.html)  
 interface in a similar fashion.
 
