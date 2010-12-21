@@ -1,2 +1,9 @@
 markdown: rdiscount
 pygments: true
+
+#
+# site configuration
+#
+url: http://pukkaone.github.com
+title: "Software Developer's Notebook"
+author: Chin Huang
