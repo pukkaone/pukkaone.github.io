@@ -93,14 +93,14 @@ It recursively descends into subdirectories and processes JSPs found there.
 The call to the
 [RequestDispatcher.include](http://download.oracle.com/javaee/6/api/javax/servlet/RequestDispatcher.html#include(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
 method sends a request to a JSP.  One of the arguments must be a
-[ServletRequest](http://download.oracle.com/javaee/6/api/javax/servlet/ServletRequest.html)
+[HttpServletRequest](http://download.oracle.com/javaee/6/api/javax/servlet/http/HttpServletRequest.html)
 implementation that returns `jsp_precompile` for the query string.  I could
-have written a class providing stub implementations for the ServletRequest
+have written a class providing stub implementations for the HttpServletRequest
 methods, but the interface has so many methods that the code to create a
 [JDK dynamic proxy](http://download.oracle.com/javase/6/docs/api/java/lang/reflect/Proxy.html)
 implementing the interface is more concise.  Another JDK dynamic proxy
 implements the
-[ServletResponse](http://download.oracle.com/javaee/6/api/javax/servlet/ServletResponse.html)  
+[HttpServletResponse](http://download.oracle.com/javaee/6/api/javax/servlet/http/HttpServletResponse.html)
 interface in a similar fashion.
 
 {% highlight java %}

@@ -1,5 +1,5 @@
 /*
-Modified from DePo Skinny theme http://powazek.com
+Modified from DePo Skinny theme http://powazek.com/depo-skinny
 */
 
 body {
@@ -123,12 +123,6 @@ h4 {
     width: 700px;
 }
 
-.postnoline {
-    padding:18px 0 0 0;
-    text-align:left;
-    width: 700px;
-}
-
 .postcomment {
     padding:18px 0 0 0;
     text-align:left;
@@ -198,7 +192,6 @@ span.edit a {
 .delicious-tags a { font-weight:normal; color:#333 }
 ul.delicious { color:#555 }
 
-
 /* FOOTER */
 
 .footer {
@@ -226,7 +219,7 @@ ul.delicious { color:#555 }
 
 .copyright {
     font-size: 11px;
-    margin:12px 0 0 0;
+    margin: 12px 0 0 0;
     padding: 18px 0 10px 0;
     border-top: 1px solid #666;
     text-align:right;
