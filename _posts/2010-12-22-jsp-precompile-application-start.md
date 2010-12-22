@@ -3,19 +3,20 @@ layout: post
 title: Compile JSPs On Application Startup
 ---
 
-The first request to a JSP has a processing delay as the application server
-converts the JSP to Java code and compiles the Java code to a class file.  You
-can prevent your users from experiencing this delay by compiling the JSPs
-before they are requested.
+The first request to a JSP typically has a processing delay as the JSP
+container compiles the JSP.  Specifically, the container generates Java source
+code for a servlet and compiles the source code to a class file.  You can
+prevent your users from experiencing this delay by compiling the JSPs before
+they are requested.
 
 The [Tomcat manual](http://tomcat.apache.org/tomcat-6.0-doc/jasper-howto.html#Web_Application_Compilation)
 describes how to compile JSPs at build time.  An Ant target runs the Japser JSP
-Engine to convert JSPs to Java servlet code.  Another Ant target compiles the
-Java servlet code to class files.  Servlet declarations and mappings for the
-generated servlets must be merged into the `web.xml` file.  I'm going to present
-a sleeker solution.
+Engine to convert JSPs to servlet code.  Another Ant target compiles the
+servlet code to class files.  Servlet declarations and mappings for the
+generated servlets must be merged into the `web.xml` file.  I'm going to
+present another solution that compiles JSPs when the application starts.
 
-The JSP specification says a JSP container must accept the request parameter
+The JSP specification says a container must accept the request parameter
 `jsp_precompile` on a request to a JSP.  The parameter can have values `true`
 or `false`, or no value at all.  If the parameter has value `true` or no value,
 then it is a suggestion to the container to compile the JSP.  Even if container
