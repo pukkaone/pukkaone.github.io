@@ -37,7 +37,8 @@ You must also remember to include these solutions in any new code you write.
 Starting with
 JSP 2.1, a Web application can register a custom
 [ELResolver](http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html).
-I'm going to present a custom ELResolver that escapes EL expression values,
+I'm going to present a
+[custom ELResolver that escapes EL expression values](http://github.com/pukkaone/jsptools/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolver.java),
 allowing you to use EL expressions while preventing cross-site scripting.
 
 A
@@ -54,7 +55,7 @@ it, define a listener in the `web.xml` file:
 
 ### Details
 
-A servlet context listener's `contextInitialized` method calls the
+The servlet context listener's `contextInitialized` method calls the
 [JspApplicationContext.addELResolver](http://download.oracle.com/javaee/6/api/javax/servlet/jsp/JspApplicationContext.html#addELResolver(javax.el.ELResolver\))
 method to register the custom ELResolver.
 
