@@ -61,10 +61,9 @@ method to register the custom ELResolver.
 
 {% highlight java %}
     public void contextInitialized(ServletContextEvent event) {
-        ServletContext servletContext = event.getServletContext(); 
-        JspApplicationContext jspContext = 
-                JspFactory.getDefaultFactory().getJspApplicationContext(servletContext); 
-        jspContext.addELResolver(new EscapeXmlELResolver()); 
+        JspFactory.getDefaultFactory()
+                .getJspApplicationContext(event.getServletContext())
+                .addELResolver(new EscapeXmlELResolver());
     }
 {% endhighlight %}
 
@@ -126,4 +125,7 @@ its turn in the chain comes around.
 {% endhighlight %}
 
 After getting the value from the chain, if the value is a String, then the
-custom ELResolver escapes the String value.
+custom ELResolver escapes the String value.  One of the resolvers in the chain
+very likely set the `propertyResolved` property of the `ELContext` to `true`.
+Because this property set to `true`, processing of the chain stops after
+returning from the custom ELResolver.
