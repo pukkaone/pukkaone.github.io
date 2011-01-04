@@ -198,24 +198,23 @@ ul.delicious { color:#555 }
     text-align: left;
 }
 
-.footer div {
-    width: 380px;
-    margin: 0 20px 0 0;
-    float: left;
+.footer h1 {
+    font-size: 11px;
+    margin: 16px 0 0 0;
 }
 
 .footer img {
-    border:0;
+    border: 0;
 }
 
 .footer div.last {
-    width:140px;
+    width: 140px;
     margin: 0 0 0 0;
 }
 
 .copyright {
     font-size: 11px;
-    margin: 12px 0 0 0;
+    margin-top: 0;
     padding: 18px 0 10px 0;
     border-top: 1px solid #666;
     text-align:right;

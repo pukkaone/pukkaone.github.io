@@ -37,12 +37,14 @@
   <br clear="all">
 
   <div class="footer">
-    <div>
-        <p><strong>Recent Posts</strong></p>
-        {% for post in site.posts %}
-          <span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a><br>
-        {% endfor %}			
-    </div>
+    <h1>Recent Posts</h1>
+    <table cellspacing="0">
+    {% for post in site.posts %}
+      <tr>
+        <td>{{ post.date | date_to_string }}
+        <td>&raquo; <a href="{{ post.url }}">{{ post.title }}</a>
+    {% endfor %}			
+    </table>
   </div>
 
   <br clear="all">
