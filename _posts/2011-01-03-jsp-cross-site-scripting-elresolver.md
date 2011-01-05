@@ -69,7 +69,8 @@ method to register the custom ELResolver.
 
 The `addELResolver` method inserts the custom ELResolver into a chain of
 standard resolvers.  When evaluating an expression, the JSP container consults
-the chain of resolvers in the order:
+the chain of resolvers in the following order, stopping at the first resolver
+to succeed:
 
  * ImplicitObjectELResolver
  * *ELResolvers registered by the addELResolver method.*
@@ -80,7 +81,7 @@ the chain of resolvers in the order:
  * ScopedAttributeELResolver
 
 This is a problem because the custom ELResolver wants to escape the value that
-results from consulting the entire chain.  In a bit of tricky programming,
+would have resulted from consulting the chain.  In a bit of tricky programming,
 the custom ELResolver saves a reference to the chain of resolvers, which is
 actually implemented by a
 [CompositeELResolver](http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html):
@@ -124,8 +125,15 @@ its turn in the chain comes around.
     }
 {% endhighlight %}
 
-After getting the value from the chain, if the value is a String, then the
-custom ELResolver escapes the String value.  One of the resolvers in the chain
-very likely set the `propertyResolved` property of the `ELContext` to `true`.
-Because this property set to `true`, processing of the chain stops after
+There's a resolver in the chain before the custom ELResolver.  This resolver,
+ImplicitObjectELResolver, will be invoked twice.  First, before reaching the
+custom ELResolver, and again when the custom ELResolver invokes the chain.
+Multiple invocations of ImplicitObjectELResolver is harmless because
+ImplicitObjectELResolver had to fail in order for the custom ELResolver to be
+invoked.  When the custom ELResolver invokes the chain, the
+ImplicitObjectELResolver will fail again.
+
+A resolver indicates success by setting the `propertyResolved` property of the
+`ELContext` to `true`.  When consulting the chain, one of the resolvers very
+likely set this property to `true`, so no other resolvers are invoked after
 returning from the custom ELResolver.
