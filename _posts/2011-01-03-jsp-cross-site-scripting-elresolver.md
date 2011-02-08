@@ -38,11 +38,11 @@ Starting with
 JSP 2.1, a Web application can register a custom
 [ELResolver](http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html).
 I'm going to present a
-[custom ELResolver that escapes EL expression values](http://github.com/pukkaone/jsptools/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolver.java),
+[custom ELResolver that escapes EL expression values](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolver.java),
 allowing you to use EL expressions while preventing cross-site scripting.
 
 A
-[custom servlet context listener](http://github.com/pukkaone/jsptools/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolverListener.java)
+[custom servlet context listener](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolverListener.java)
 registers the custom ELResolver when the application starts.  To use
 it, define a listener in the `web.xml` file:
 
