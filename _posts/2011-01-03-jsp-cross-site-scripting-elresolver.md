@@ -31,11 +31,12 @@ Alternatively, the EL function `fn:escapeXml` also escapes XML characters:
 ${fn:escapeXml(user.name)}
 {% endhighlight %}
 
-If you have a lot of JSPs, fixing them using these solutions is tedious.
-You must also remember to include these solutions in any new code you write.
+The default option should be the safe option.  That's a sensible engineering
+principle.  If EL expression values are escaped by default, then you're
+protected from coders who forget to wrap EL expressions in `c:out` or
+`fn:escapeXml`.
 
-Starting with
-JSP 2.1, a Web application can register a custom
+Starting with JSP 2.1, a Web application can register a custom
 [ELResolver](http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html).
 I'm going to present a
 [custom ELResolver that escapes EL expression values](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolver.java),
@@ -51,6 +52,15 @@ it, define a listener in the `web.xml` file:
   <listener-class>com.github.pukkaone.jsp.EscapeXmlELResolverListener</listener-class>
 </listener> 
 {% endhighlight %}
+
+When you register this custom ELResolver, all EL expression values will be
+escaped.  If you want a JSP to programmatically output HTML, you have to use a
+mechanism that doesn't render from an EL expression.  You can write a
+[custom tag](http://download.oracle.com/javaee/5/tutorial/doc/bnalj.html)
+to render the output, or you can go old-school with a
+[JSP scriptlet](http://download.oracle.com/javaee/5/tutorial/doc/bnaou.html)
+or
+[JSP expression](http://download.oracle.com/javaee/5/tutorial/doc/bnaov.html).
 
 
 ### Details
