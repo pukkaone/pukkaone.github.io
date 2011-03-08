@@ -68,11 +68,11 @@ Another way uses a custom tag to surround JSP code in which EL expression values
 should not be escaped:
 
 {% highlight jsp %}
-<%@ taglib prefix="wae" uri="http://pukkaone.github.com/jsp" %>
+<%@ taglib prefix="enhance" uri="http://pukkaone.github.com/jsp" %>
 
-<wae:out escapeXml="false">
+<enhance:out escapeXml="false">
   I hope this expression returns safe HTML: ${user.name}
-</wae:out>
+</enhance:out>
 {% endhighlight %}
 
 The `escapeXml` attribute is `true` by default.  You must explicitly set it to
