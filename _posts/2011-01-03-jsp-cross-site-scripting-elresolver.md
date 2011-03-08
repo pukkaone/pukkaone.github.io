@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ELResolver To Prevent Cross-Site Scripting in JSPs
+title: ELResolver Escapes JSP EL Output To Prevent Cross-Site Scripting
 ---
 
 [Cross-site scripting](http://en.wikipedia.org/wiki/Cross-site_scripting) is a
