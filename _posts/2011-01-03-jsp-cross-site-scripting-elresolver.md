@@ -105,27 +105,12 @@ to succeed:
  * BeanELResolver
  * ScopedAttributeELResolver
 
-This is a problem because the custom ELResolver wants to escape the value that
-would have resulted from consulting the chain.  In a bit of tricky programming,
-the custom ELResolver saves a reference to the chain of resolvers, which is
-actually implemented by a
-[CompositeELResolver](http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html):
-
-{% highlight java %}
-    private ELResolver originalResolver;
-    
-    private ELResolver getOriginalResolver(ELContext context) {
-        if (originalResolver == null) {
-            originalResolver = context.getELResolver();
-        }
-        return originalResolver;
-    }
-{% endhighlight %}
-
-When asked for a value, the custom ELResolver invokes the chain of resolvers
-to get the value.  The custom ELResolver is itself in the chain of resolvers,
-so before invoking the chain, it sets a flag telling itself to do nothing when
-its turn in the chain comes around.
+This presents a slight problem because the custom ELResolver wants to escape
+the value that would have resulted from consulting the chain.  When asked for a
+value, the custom ELResolver invokes the chain of resolvers.  The custom
+ELResolver is itself in the chain of resolvers, so before invoking the chain,
+it sets a flag telling itself to do nothing when its turn in the chain comes
+around.
 
 {% highlight java %}
     private boolean gettingValue;
@@ -139,8 +124,8 @@ its turn in the chain comes around.
         }
         
         gettingValue = true;
-        Object value =
-                getOriginalResolver(context).getValue(context, base, property);
+        Object value = context.getELResolver().getValue(
+                context, base, property);
         gettingValue = false;
 
         if (value instanceof String) {
