@@ -53,14 +53,30 @@ it, define a listener in the `web.xml` file:
 </listener> 
 {% endhighlight %}
 
+
+### Disable escaping
+
 When you register this custom ELResolver, all EL expression values will be
-escaped.  If you want a JSP to programmatically output HTML, you have to use a
-mechanism that doesn't render from an EL expression.  You can write a
-[custom tag](http://download.oracle.com/javaee/5/tutorial/doc/bnalj.html)
-to render the output, or you can go old-school with a
+escaped by default.  If you want a JSP to programmatically output HTML, you
+can resort to a
 [JSP scriptlet](http://download.oracle.com/javaee/5/tutorial/doc/bnaou.html)
 or
-[JSP expression](http://download.oracle.com/javaee/5/tutorial/doc/bnaov.html).
+[JSP expression](http://download.oracle.com/javaee/5/tutorial/doc/bnaov.html),
+unless the application configured `scripting-invalid` to `true`.
+
+Another way uses a custom tag to surround JSP code in which EL expression values
+should not be escaped:
+
+{% highlight jsp %}
+<%@ taglib prefix="wae" uri="http://pukkaone.github.com/jsp" %>
+
+<wae:out escapeXml="false">
+  I hope this expression returns safe HTML: ${user.name}
+</wae:out>
+{% endhighlight %}
+
+The `escapeXml` attribute is `true` by default.  You must explicitly set it to
+`false` in the tag to disable escaping.
 
 
 ### Details
