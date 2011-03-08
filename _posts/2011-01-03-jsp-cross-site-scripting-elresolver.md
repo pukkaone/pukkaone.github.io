@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ELResolver Escapes JSP EL Output To Prevent Cross-Site Scripting
+title: ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting
 ---
 
 [Cross-site scripting](http://en.wikipedia.org/wiki/Cross-site_scripting) is a
@@ -32,15 +32,14 @@ ${fn:escapeXml(user.name)}
 {% endhighlight %}
 
 The default option should be the safe option.  That's a sensible engineering
-principle.  If EL expression values are escaped by default, then you're
-protected from coders who forget to wrap EL expressions in `c:out` or
-`fn:escapeXml`.
+principle.  If EL values are escaped by default, then you're protected from
+coders who forget to wrap expressions in `c:out` or `fn:escapeXml`.
 
 Starting with JSP 2.1, a Web application can register a custom
 [ELResolver](http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html).
 I'm going to present a
-[custom ELResolver that escapes EL expression values](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolver.java),
-allowing you to use EL expressions while preventing cross-site scripting.
+[custom ELResolver that escapes EL values](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolver.java),
+allowing you to use EL in JSPs while preventing cross-site scripting.
 
 A
 [custom servlet context listener](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/EscapeXmlELResolverListener.java)
@@ -56,16 +55,16 @@ it, define a listener in the `web.xml` file:
 
 ### Disable escaping
 
-When you register this custom ELResolver, all EL expression values will be
-escaped by default.  If you want a JSP to programmatically output HTML, you
-can resort to a
+When you register this custom ELResolver, all EL values will be escaped by
+default.  If you want a JSP to programmatically output HTML, you can resort to
+a
 [JSP scriptlet](http://download.oracle.com/javaee/5/tutorial/doc/bnaou.html)
 or
 [JSP expression](http://download.oracle.com/javaee/5/tutorial/doc/bnaov.html),
 unless the application configured `scripting-invalid` to `true`.
 
-Another way uses a custom tag to surround JSP code in which EL expression values
-should not be escaped:
+Another way uses a custom tag to surround JSP code in which EL values should
+not be escaped:
 
 {% highlight jsp %}
 <%@ taglib prefix="enhance" uri="http://pukkaone.github.com/jsp" %>
