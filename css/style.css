@@ -113,7 +113,7 @@ h4 {
     width:120px;
 }
 
-/* POSTS */
+/* POST */
 
 .post {
     padding-top: 1em;
@@ -132,11 +132,6 @@ h4 {
 .commentslnk {
     font-size:13px;
     text-align:center;
-}
-
-.byline {
-    color: #555;
-    font-size: 11px;
 }
 
 .posttitle h2 {
@@ -224,3 +219,23 @@ ul.delicious { color:#555 }
 }
 
 ul.nav li { margin: 0 }
+
+/* POST LIST */
+
+ul.posts {
+    color: #666;
+    list-style-type: none;
+    margin-left: 0;
+    margin-top: 0;
+    padding-left: 0;
+}
+
+ul.posts li {
+    line-height: 1em;
+}
+
+span.date {
+    color: #666;
+    font-family: Menlo, Consolas, monospace;
+    font-size: 80%;
+}
