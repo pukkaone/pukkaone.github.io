@@ -11,9 +11,9 @@ body {
 }
 
 h1, h2, h3, h4 { 
-    font-family: "Segoe UI", "Lucida Grande", Verdana, sans-serif;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, sans-serif;
     font-weight: normal;
-    margin-bottom: 18px;
+    margin-bottom: 15px;
     margin-top: 27px;
 }
 
@@ -28,14 +28,14 @@ h2 a {
 }
 
 p, pre, ol, ul { 
-    margin: 18px 0;
+    margin: 15px 0;
 }
 p, li { 
     line-height: 18px;
 }
 
 blockquote { 
-    margin: 0 18px 18px 18px;
+    margin: 0 15px 15px 15px;
     font-size: 12px;
     color: #666;
     padding-left: 10px;
@@ -194,7 +194,7 @@ ul.delicious { color:#555 }
     border-top: 1px solid #666;
     color: #666;
     font-size: 11px;
-    margin-top: 18px;
+    margin-top: 15px;
     text-align: left;
 }
 
