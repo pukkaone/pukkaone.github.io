@@ -13,7 +13,7 @@ data might contain executable code.
 Since JSP 2.0, EL expressions can appear in the template text:
 
 {% highlight jsp %}
-<div id="greeting">Hello, ${user.name}</div>
+<h1>Hello, ${user.name}</h1>
 {% endhighlight %}
 
 Unfortunately, the JSP container does not escape expression values, so if the
