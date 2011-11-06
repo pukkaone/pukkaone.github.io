@@ -48,32 +48,28 @@ example):
 This [Ant](http://ant.apache.org/) task extracts the build number into the
 `BUILD_NUMBER` property:
 
-{% highlight xml %}
-<exec executable="git" outputproperty="BUILD_NUMBER">
-  <arg value="describe"/>
-  <arg value="--match"/>
-  <arg value="build"/>
-  <redirector>
-    <outputfilterchain>
-      <tokenfilter>
-        <replaceregex pattern="^[^-]+-" replace=""/>
-        <replaceregex pattern="-.+$" replace=""/>
-      </tokenfilter>
-   </outputfilterchain>
- </redirector>
-</exec>
-{% endhighlight %}
+    <exec executable="git" outputproperty="BUILD_NUMBER">
+      <arg value="describe"/>
+      <arg value="--match"/>
+      <arg value="build"/>
+      <redirector>
+        <outputfilterchain>
+          <tokenfilter>
+            <replaceregex pattern="^[^-]+-" replace=""/>
+            <replaceregex pattern="-.+$" replace=""/>
+          </tokenfilter>
+       </outputfilterchain>
+     </redirector>
+    </exec>
 
 This [CMake](http://cmake.org/) script parses the build number into the
 `BUILD_NUMBER` variable:
 
-{% highlight cmake %}
-find_package(Git)
-if(GIT_FOUND)
-    execute_process(
-            COMMAND ${GIT_EXECUTABLE} describe --match build
-            OUTPUT_VARIABLE DESCRIBE_BUILD
-            OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(REGEX MATCH "[0-9]+" BUILD_NUMBER ${DESCRIBE_BUILD})
-endif()
-{% endhighlight %}
+    find_package(Git)
+    if(GIT_FOUND)
+        execute_process(
+                COMMAND ${GIT_EXECUTABLE} describe --match build
+                OUTPUT_VARIABLE DESCRIBE_BUILD
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+        string(REGEX MATCH "[0-9]+" BUILD_NUMBER ${DESCRIBE_BUILD})
+    endif()

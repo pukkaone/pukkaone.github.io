@@ -12,24 +12,18 @@ data might contain executable code.
 
 Since JSP 2.0, EL expressions can appear in the template text:
 
-{% highlight jsp %}
-<h1>Hello, ${user.name}</h1>
-{% endhighlight %}
+    <h1>Hello, ${user.name}</h1>
 
 Unfortunately, the JSP container does not escape expression values, so if the
 expression contains user-controlled data, then cross-site scripting is
 possible.  JSTL provides a couple of ways to sanitize the output.  The `c:out`
 tag escapes XML characters by default:
 
-{% highlight jsp %}
-<c:out value="${user.name}"/>
-{% endhighlight %}
+    <c:out value="${user.name}"/>
 
 Alternatively, the EL function `fn:escapeXml` also escapes XML characters:
 
-{% highlight jsp %}
-${fn:escapeXml(user.name)}
-{% endhighlight %}
+    ${fn:escapeXml(user.name)}
 
 The default option should be the safe option.  That's a sensible engineering
 principle.  If EL values are escaped by default, then you're protected from
@@ -46,11 +40,9 @@ A
 registers the custom ELResolver when the application starts.  To use
 it, define a listener in the `web.xml` file:
 
-{% highlight xml %}
-<listener>
-  <listener-class>com.github.pukkaone.jsp.EscapeXmlELResolverListener</listener-class>
-</listener> 
-{% endhighlight %}
+    <listener>
+      <listener-class>com.github.pukkaone.jsp.EscapeXmlELResolverListener</listener-class>
+    </listener> 
 
 
 ### Disable escaping
@@ -66,13 +58,11 @@ unless the application configured `scripting-invalid` to `true`.
 Another way uses a custom tag to surround JSP code in which EL values should
 not be escaped:
 
-{% highlight jsp %}
-<%@ taglib prefix="enhance" uri="http://pukkaone.github.com/jsp" %>
+    <%@ taglib prefix="enhance" uri="http://pukkaone.github.com/jsp" %>
 
-<enhance:out escapeXml="false">
-  I hope this expression returns safe HTML: ${user.name}
-</enhance:out>
-{% endhighlight %}
+    <enhance:out escapeXml="false">
+      I hope this expression returns safe HTML: ${user.name}
+    </enhance:out>
 
 The `escapeXml` attribute is `true` by default.  You must explicitly set it to
 `false` in the tag to disable escaping.
@@ -84,13 +74,11 @@ The servlet context listener's `contextInitialized` method calls the
 [JspApplicationContext.addELResolver](http://download.oracle.com/javaee/6/api/javax/servlet/jsp/JspApplicationContext.html#addELResolver(javax.el.ELResolver\))
 method to register the custom ELResolver.
 
-{% highlight java %}
-    public void contextInitialized(ServletContextEvent event) {
-        JspFactory.getDefaultFactory()
-                .getJspApplicationContext(event.getServletContext())
-                .addELResolver(new EscapeXmlELResolver());
-    }
-{% endhighlight %}
+        public void contextInitialized(ServletContextEvent event) {
+            JspFactory.getDefaultFactory()
+                    .getJspApplicationContext(event.getServletContext())
+                    .addELResolver(new EscapeXmlELResolver());
+        }
 
 The `addELResolver` method inserts the custom ELResolver into a chain of
 standard resolvers.  When evaluating an expression, the JSP container consults
@@ -112,28 +100,26 @@ ELResolver is itself in the chain of resolvers, so before invoking the chain,
 it sets a flag telling itself to do nothing when its turn in the chain comes
 around.
 
-{% highlight java %}
-    private boolean gettingValue;
+        private boolean gettingValue;
 
-    @Override
-    public Object getValue(ELContext context, Object base, Object property)
-        throws NullPointerException, PropertyNotFoundException, ELException
-    {
-        if (gettingValue) {
-            return null;
-        }
-        
-        gettingValue = true;
-        Object value = context.getELResolver().getValue(
-                context, base, property);
-        gettingValue = false;
+        @Override
+        public Object getValue(ELContext context, Object base, Object property)
+            throws NullPointerException, PropertyNotFoundException, ELException
+        {
+            if (gettingValue) {
+                return null;
+            }
+            
+            gettingValue = true;
+            Object value = context.getELResolver().getValue(
+                    context, base, property);
+            gettingValue = false;
 
-        if (value instanceof String) {
-            value = EscapeXml.escape((String) value);
+            if (value instanceof String) {
+                value = EscapeXml.escape((String) value);
+            }
+            return value;
         }
-        return value;
-    }
-{% endhighlight %}
 
 There's a resolver in the chain before the custom ELResolver.  This resolver,
 ImplicitObjectELResolver, will be invoked twice.  First, before reaching the

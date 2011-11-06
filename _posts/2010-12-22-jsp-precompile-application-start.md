@@ -28,11 +28,9 @@ A
 compiles all JSPs in the Web application when the application starts.  To use
 it, define a listener in the `web.xml` file:
 
-{% highlight xml %}
-<listener>
-  <listener-class>com.github.pukkaone.jsp.JspCompileListener</listener-class>
-</listener> 
-{% endhighlight %}
+    <listener>
+      <listener-class>com.github.pukkaone.jsp.JspCompileListener</listener-class>
+    </listener> 
 
 
 ### Details
@@ -41,54 +39,48 @@ The `JspCompileListener` class implements the
 [ServletContextListener](http://download.oracle.com/javaee/6/api/javax/servlet/ServletContextListener.html)
 interface so it receives a notification when the Web application starts.
 
-{% highlight java %}
-public class JspCompileListener implements ServletContextListener {
-    private ServletContext servletContext;
-    private HttpServletRequest request = createHttpServletRequest();
-    private HttpServletResponse response = createHttpServletResponse();
-{% endhighlight %}
+    public class JspCompileListener implements ServletContextListener {
+        private ServletContext servletContext;
+        private HttpServletRequest request = createHttpServletRequest();
+        private HttpServletResponse response = createHttpServletResponse();
 
 The `contextInitialized` method receives a notification when the application
 starts.
 
-{% highlight java %}
-    public void contextInitialized(ServletContextEvent event) {
-        servletContext = event.getServletContext();
-        
-        compileJspsInDirectory("/");
-    }
-{% endhighlight %}
+        public void contextInitialized(ServletContextEvent event) {
+            servletContext = event.getServletContext();
+            
+            compileJspsInDirectory("/");
+        }
 
 The `compileJspsInDirectory` method finds and compiles all JSPs in a directory.
 It recursively descends into subdirectories and processes JSPs found there.
 
-{% highlight java %}
-    @SuppressWarnings("unchecked")
-    private void compileJspsInDirectory(String dirPath) {
-        Set<String> paths = servletContext.getResourcePaths(dirPath);
-        for (String path : paths) {
-            if (path.endsWith(".jsp")) {
-                RequestDispatcher requestDispatcher =
-                        servletContext.getRequestDispatcher(path);
-                if (requestDispatcher == null) {
-                    // Should have gotten a RequestDispatcher for the path
-                    // because the path came from the getResourcePaths() method.
-                    throw new Error(path + " not found");
-                }
+        @SuppressWarnings("unchecked")
+        private void compileJspsInDirectory(String dirPath) {
+            Set<String> paths = servletContext.getResourcePaths(dirPath);
+            for (String path : paths) {
+                if (path.endsWith(".jsp")) {
+                    RequestDispatcher requestDispatcher =
+                            servletContext.getRequestDispatcher(path);
+                    if (requestDispatcher == null) {
+                        // Should have gotten a RequestDispatcher for the path
+                        // because the path came from the getResourcePaths() method.
+                        throw new Error(path + " not found");
+                    }
 
-                try {
-                    servletContext.log("Compiling " + path);
-                    requestDispatcher.include(request, response);
-                } catch (Exception e) {
-                    servletContext.log("include", e);
+                    try {
+                        servletContext.log("Compiling " + path);
+                        requestDispatcher.include(request, response);
+                    } catch (Exception e) {
+                        servletContext.log("include", e);
+                    }
+                } else if (path.endsWith("/")) {
+                    // Recursively process subdirectories.
+                    compileJspsInDirectory(path);
                 }
-            } else if (path.endsWith("/")) {
-                // Recursively process subdirectories.
-                compileJspsInDirectory(path);
             }
         }
-    }
-{% endhighlight %}
 
 The call to the
 [RequestDispatcher.include](http://download.oracle.com/javaee/6/api/javax/servlet/RequestDispatcher.html#include(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
@@ -103,20 +95,18 @@ implements the
 [HttpServletResponse](http://download.oracle.com/javaee/6/api/javax/servlet/http/HttpServletResponse.html)
 interface in a similar fashion.
 
-{% highlight java %}
-    private HttpServletRequest createHttpServletRequest() {
-        InvocationHandler handler = new InvocationHandler() {
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                if (method.getName().equals("getQueryString")) {
-                    return "jsp_precompile";
+        private HttpServletRequest createHttpServletRequest() {
+            InvocationHandler handler = new InvocationHandler() {
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    if (method.getName().equals("getQueryString")) {
+                        return "jsp_precompile";
+                    }
+                    return null;
                 }
-                return null;
-            }
-        };
-        
-        return (HttpServletRequest) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class<?>[] { HttpServletRequest.class },
-                handler);
-    }
-{% endhighlight %}
+            };
+            
+            return (HttpServletRequest) Proxy.newProxyInstance(
+                    getClass().getClassLoader(),
+                    new Class<?>[] { HttpServletRequest.class },
+                    handler);
+        }

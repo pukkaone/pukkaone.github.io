@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset='UTF-8'>
   <title>{{ page.title }}</title>
 
   <link rel="shortcut icon" href="/favicon.ico">
@@ -10,7 +10,19 @@
   <link rel="stylesheet" href="/css/main.css" type="text/css">
 
   <!-- syntax highlighting CSS -->
-  <link rel="stylesheet" href="/css/syntax.css" type="text/css">
+  <link rel="stylesheet" href="/css/prettify.css" type="text/css">
+
+  <script type="text/javascript" src="/js/prettify.js"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+
+  <script type="text/javascript">
+    $(function() {
+      $('pre').each(function() {
+        $(this).hasClass('no-syntax') || $(this).addClass('prettyprint');
+      });
+      prettyPrint();
+    });
+  </script>
 
   <!-- Google Analytics -->
   <script type="text/javascript">

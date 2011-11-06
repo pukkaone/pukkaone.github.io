@@ -37,19 +37,17 @@ p, li {
 blockquote { 
     margin: 0 15px 15px 15px;
     font-size: 12px;
-    color: #666;
+    color: #888;
     padding-left: 10px;
     border-left: 1px solid #ccc;
 }
 
 pre {
-    background-color: #eee;
-    border: 1px solid #ddd;
     padding: 5px;
 }
 
 code {
-    font-family: Consolas, Menlo, monospace;
+    font-family: Menlo, Consolas, monospace;
 }
 
 ul {
@@ -88,23 +86,24 @@ h4 {
 
 .header {
     text-align: left;
-    border-bottom: 1px solid #666;
+    border-bottom: 1px solid #888;
 }
 
 .header h1 {
     font-size: 26px;
-    color: black;
     font-weight: normal;
 }
 
 .header span {
     margin-left: 10px;
     font-size: 12px;
-    color: #666;
+    color: #888;
     font-weight: normal;
 }
 
-.header a { color: black; }
+.header a {
+    color: #888;
+}
 
 .search {
     padding:11px 0 0 20px;
@@ -129,7 +128,7 @@ h4 {
     text-align:left;
     width: 700px;
     font-size:11px;
-    color:#666;
+    color:#888;
 }
 
 .commentslnk {
@@ -157,7 +156,7 @@ span.edit a {
     float:right;
     font-weight:normal; 
     font-size:11px; 
-    color:#666; 
+    color:#888; 
     border:1px solid #ccc; 
     padding:0 4px; 
 }
@@ -166,7 +165,7 @@ span.edit a {
     float:left;
     width: 152px;
     font-size: 10px;
-    color: #666;
+    color: #888;
     padding: 3px 0;
 }
 
@@ -184,15 +183,15 @@ span.edit a {
 
 .postform { width:150px; margin: 0;} 
 
-.delicious-tags { font-size:11px; color:#666 }
+.delicious-tags { font-size:11px; color:#888 }
 .delicious-tags a { font-weight:normal; color:#333 }
 ul.delicious { color:#555 }
 
 /* FOOTER */
 
 .footer {
-    border-top: 1px solid #666;
-    color: #666;
+    border-top: 1px solid #888;
+    color: #888;
     font-size: 11px;
     margin-top: 15px;
     text-align: left;
@@ -216,9 +215,9 @@ ul.delicious { color:#555 }
     font-size: 11px;
     margin-top: 0;
     padding: 18px 0 10px 0;
-    border-top: 1px solid #666;
+    border-top: 1px solid #888;
     text-align:right;
-    color: #666;
+    color: #888;
 }
 
 ul.nav li { margin: 0 }
@@ -226,7 +225,7 @@ ul.nav li { margin: 0 }
 /* POST LIST */
 
 ul.posts {
-    color: #666;
+    color: #888;
     list-style-type: none;
     margin-left: 0;
     margin-top: 0;
@@ -238,6 +237,6 @@ ul.posts li {
 }
 
 span.date {
-    color: #666;
+    color: #888;
     font-family: Menlo, Consolas, monospace;
 }

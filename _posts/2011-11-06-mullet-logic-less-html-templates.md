@@ -18,37 +18,31 @@ will replace with dynamic content at run time.
 
 Given the template:
 
-{% highlight html %}
-<ul>
-  <li data-for="repos">
-    <a data-href="url" data-text="description">Sample project</a>
-  </li>
-</ul>
-{% endhighlight %}
+    <ul>
+      <li data-for="repos">
+        <a data-href="url" data-text="description">Sample project</a>
+      </li>
+    </ul>
 
 Given the data in the hash:
 
-{% highlight javascript %}
-{
-  repos: [
-    { url: "hello", description: "Hello project" },
-    { url: "world", description: "World project" }
-  ]
-}
-{% endhighlight %}
+    {
+      repos: [
+        { url: "hello", description: "Hello project" },
+        { url: "world", description: "World project" }
+      ]
+    }
 
 Will render the output:
 
-{% highlight html %}
-<ul>
-  <li>
-    <a href="hello">Hello project</a>
-  </li>
-  <li>
-    <a href="world">World project</a>
-  </li>
-</ul>
-{% endhighlight %}
+    <ul>
+      <li>
+        <a href="hello">Hello project</a>
+      </li>
+      <li>
+        <a href="world">World project</a>
+      </li>
+    </ul>
 
 By coding the commands in
 [HTML5 custom data attributes](http://www.w3.org/TR/html5/elements.html#embedding-custom-non-visible-data-with-the-data-attributes),
