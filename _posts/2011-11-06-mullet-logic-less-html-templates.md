@@ -67,3 +67,13 @@ content.
 [Thymeleaf](http://www.thymeleaf.org/) have the same idea of coding the
 commands in HTML attributes, but they each implement a rich expression language,
 and I want to see have far I get with an extremely simple variable syntax.
+
+
+## Implementations
+
+The project includes implementation in these programming languages:
+
+  * [Java](http://pukkaone.github.com/mullet/java.html), including Spring MVC
+    integration
+  * [Ruby](http://pukkaone.github.com/mullet/ruby.html), including Sinatra
+    integration
