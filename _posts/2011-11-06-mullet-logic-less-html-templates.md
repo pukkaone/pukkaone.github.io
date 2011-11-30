@@ -71,7 +71,7 @@ and I want to see have far I get with an extremely simple variable syntax.
 
 ## Implementations
 
-The project includes implementation in these programming languages:
+The project has implementations in these programming languages:
 
   * [Java](http://pukkaone.github.com/mullet/java.html), including Spring MVC
     integration
