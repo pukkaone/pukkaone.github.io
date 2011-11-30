@@ -3,15 +3,15 @@ layout: post
 title: "Introducing Mullet logic-less HTML templates"
 ---
 
-If you take the
-variables
-in [Mustache](http://mustache.github.com/)
+If you take the variables in
+[Mustache](http://mustache.github.com/)
 {% literal %} {{ }} {% endliteral %}
 tags and move them to HTML attributes, you wind up with
 [Mullet templates](http://pukkaone.github.com/mullet/).
-The templates are clean HTML and can be a static HTML prototype for your user
-interface.  This prototype can display sample content which the application
-will replace with dynamic content at run time.
+The templates are clean HTML which your HTML authoring tool and browser can
+display correctly.  You can use the templates as a static HTML prototype for
+your user interface.  Fill the prototype with sample content and the
+application will replace it with dynamic content at run time.
 
 
 ## Example
@@ -60,8 +60,8 @@ One goal is the ability to write templates as clean HTML.
 templates are pure HTML because they completely separate the commands from the
 templates.  The separation is so complete that it's not obvious from looking
 only at the template where the dynamic data is going to be inserted in the
-template.  In Mullet templates, the command in attributes point out the dynamic
-content.
+template.  In Mullet templates, the presence of a special attribute indicates
+dynamic content is going to be inserted into the element.
 
 [Cambridge](http://code.google.com/p/cambridge/) and
 [Thymeleaf](http://www.thymeleaf.org/) have the same idea of coding the
