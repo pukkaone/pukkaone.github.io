@@ -3,15 +3,10 @@ layout: post
 title: "Introducing Mullet logic-less HTML templates"
 ---
 
-If you take the variables in
-[Mustache](http://mustache.github.com/)
+If you take the variables in [Mustache](http://mustache.github.com/)
 {% literal %} {{ }} {% endliteral %}
-tags and move them to HTML attributes, you wind up with
+tags and move them into HTML attributes, you wind up with
 [Mullet templates](http://pukkaone.github.com/mullet/).
-The templates are clean HTML which your HTML authoring tool and browser can
-display correctly.  You can use the templates as a static HTML prototype for
-your user interface.  Fill the prototype with sample content and the
-application will replace it with dynamic content at run time.
 
 
 ## Example
@@ -44,9 +39,16 @@ Will render the output:
       </li>
     </ul>
 
+
+## Static HTML prototype
+
 By coding the commands in
 [HTML5 custom data attributes](http://www.w3.org/TR/html5/elements.html#embedding-custom-non-visible-data-with-the-data-attributes),
-the template is still valid HTML.
+the templates are still valid HTML.  The templates are clean HTML which your
+HTML authoring tool and browser can display correctly.  You can use the
+templates as a static HTML prototype for your user interface.  Fill the
+prototype with sample content and the application will replace it with dynamic
+content at run time.
 
 
 ## Rationale

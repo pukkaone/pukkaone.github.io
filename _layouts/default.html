@@ -17,10 +17,18 @@
 
   <script type="text/javascript">
     $(function() {
-      $('pre').each(function() {
-        $(this).hasClass('no-syntax') || $(this).addClass('prettyprint');
+      var haveCode = false;
+
+      $("pre > code").parent().each(function() {
+        if (!$(this).hasClass("prettyprint")) {
+          $(this).addClass("prettyprint");
+          haveCode = true;
+        }
       });
-      prettyPrint();
+      
+      if (haveCode) {
+        prettyPrint();
+      }
     });
   </script>
 
