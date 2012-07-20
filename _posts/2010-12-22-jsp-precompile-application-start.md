@@ -24,7 +24,7 @@ chooses to ignore this suggestion, it must not let the page process the
 request.
 
 A
-[custom servlet context listener](http://github.com/pukkaone/webappenhance/blob/master/src/com/github/pukkaone/jsp/JspCompileListener.java)
+[custom servlet context listener](https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/JspCompileListener.java)
 compiles all JSPs in the Web application when the application starts.  To use
 it, define a listener in the `web.xml` file:
 
