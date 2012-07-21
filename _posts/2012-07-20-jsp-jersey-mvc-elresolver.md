@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Read Model Data in Jersey MVC JSP Templates Without the "it."
+title: Read Model Data In Jersey MVC JSP Templates Without "it."
 ---
 
 Jersey, the JAX-RS reference implementation, includes an
