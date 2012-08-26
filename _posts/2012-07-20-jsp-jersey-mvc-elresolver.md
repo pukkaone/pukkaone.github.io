@@ -5,17 +5,18 @@ title: Read Model Data In Jersey MVC JSP Templates Without "it."
 
 Jersey, the JAX-RS reference implementation, includes an
 [MVC framework](https://blogs.oracle.com/sandoz/entry/mvcj)
-supporting the rendering of views by JSP templates.  Jersey exposes the model
+supporting the rendering of views by JSP templates.  The application passes a
+model object to the framework, where the model object implements properties
+providing the data to render in the JSP template.  Jersey exposes the model
 object to the JSP template as a request attribute named "`it`".  So to read a
 model property, a JSP template must evaluate an EL expression reading a
-property of this object, for example, `${it.propertyName}`.  Writing "`it.`"
-at the start of every expression is ugly.
+property of this object, for example, `${it.propertyName}`.
 
-In Spring MVC, an EL expression in a JSP template doesn't need a specific
-prefix.  The model is a key-value map, and the framework exposes every model
-map entry as a request attribute.
+In Spring MVC, you don't have to write a specific prefix at the start of an EL
+expression to read model data.  The model is a key-value map, and the framework
+exposes every entry of the map as a request attribute.
 
-To avoid having to write "`it.`" in JSP templates with Jersey, I wrote a
+To avoid cluttering JSP templates with "`it.`", I wrote a
 [custom ELResolver which exposes model properties as implicit objects](https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/ViewableModelELResolver.java),
 allowing a JSP template to read a model property with an EL expression like
 `${propertyName}`.
