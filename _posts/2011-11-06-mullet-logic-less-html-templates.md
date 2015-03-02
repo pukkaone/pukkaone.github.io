@@ -4,7 +4,7 @@ title: "Introducing Mullet logic-less HTML templates"
 ---
 
 If you take the variables in [Mustache](http://mustache.github.com/)
-{% literal %} {{ }} {% endliteral %}
+{% raw %} {{ }} {% endraw %}
 tags and move them into HTML attributes, you wind up with
 [Mullet templates](http://pukkaone.github.com/mullet/).
 
