@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-7747045-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-7747045-3');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Compile JSPs On Application Startup</title>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- site style -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
+  <link rel="stylesheet" href="/css/spring.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Software Developer's Notebook</a>
+      </div>
+    </nav>
+
+    <div class="row">
+      <div class="col">
+        <article class="post">
+  <header class="post-header">
+    <p class="post-meta"><time class="date">2010-12-22</time></p>
+    <h1 class="post-title">Compile JSPs On Application Startup</h1>
+  </header>
+
+  <div class="post-content">
+    <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The first request to a JSP typically has a processing delay as the JSP
+container compiles the JSP.  Specifically, the container generates Java source
+code for a servlet and compiles the source code to a class file.  You can
+prevent your users from experiencing this delay by compiling the JSPs before
+they are requested.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="http://tomcat.apache.org/tomcat-6.0-doc/jasper-howto.html#Web_Application_Compilation">Tomcat manual</a>
+describes how to compile JSPs at build time.  An Ant target runs the Japser JSP
+Engine to convert JSPs to servlet code.  Another Ant target compiles the
+servlet code to class files.  Servlet declarations and mappings for the
+generated servlets must be merged into the <code>web.xml</code> file.  I&#8217;m going to
+present another solution that compiles JSPs when the application starts.</p>
+</div>
+<div class="paragraph">
+<p>The JSP specification says a container must accept the request parameter
+<code>jsp_precompile</code> on a request to a JSP.  The parameter can have values <code>true</code>
+or <code>false</code>, or no value at all.  If the parameter has value <code>true</code> or no value,
+then it is a suggestion to the container to compile the JSP.  Even if container
+chooses to ignore this suggestion, it must not let the page process the
+request.</p>
+</div>
+<div class="paragraph">
+<p>A
+<a href="https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/JspCompileListener.java">custom servlet context listener</a>
+compiles all JSPs in the Web application when the application starts.  To use
+it, define a listener in the <code>web.xml</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="xml" class="language-xml hljs">&lt;listener&gt;
+  &lt;listener-class&gt;com.github.pukkaone.jsp.JspCompileListener&lt;/listener-class&gt;
+&lt;/listener&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="details">Details</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>JspCompileListener</code> class implements the
+<a href="http://download.oracle.com/javaee/6/api/javax/servlet/ServletContextListener.html">ServletContextListener</a>
+interface so it receives a notification when the Web application starts.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">public class JspCompileListener implements ServletContextListener {
+    private ServletContext servletContext;
+    private HttpServletRequest request = createHttpServletRequest();
+    private HttpServletResponse response = createHttpServletResponse();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>contextInitialized</code> method receives a notification when the application
+starts.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">    public void contextInitialized(ServletContextEvent event) {
+        servletContext = event.getServletContext();
+
+        compileJspsInDirectory("/");
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>compileJspsInDirectory</code> method finds and compiles all JSPs in a directory.
+It recursively descends into subdirectories and processes JSPs found there.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">    @SuppressWarnings("unchecked")
+    private void compileJspsInDirectory(String dirPath) {
+        Set&lt;String&gt; paths = servletContext.getResourcePaths(dirPath);
+        for (String path : paths) {
+            if (path.endsWith(".jsp")) {
+                RequestDispatcher requestDispatcher =
+                        servletContext.getRequestDispatcher(path);
+                if (requestDispatcher == null) {
+                    // Should have gotten a RequestDispatcher for the path
+                    // because the path came from the getResourcePaths() method.
+                    throw new Error(path + " not found");
+                }
+
+                try {
+                    servletContext.log("Compiling " + path);
+                    requestDispatcher.include(request, response);
+                } catch (Exception e) {
+                    servletContext.log("include", e);
+                }
+            } else if (path.endsWith("/")) {
+                // Recursively process subdirectories.
+                compileJspsInDirectory(path);
+            }
+        }
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The call to the
+<a href="http://download.oracle.com/javaee/6/api/javax/servlet/RequestDispatcher.html#include(javax.servlet.ServletRequest,%20javax.servlet.ServletResponse">RequestDispatcher.include</a>
+method sends a request to a JSP.  One of the arguments must be a
+<a href="http://download.oracle.com/javaee/6/api/javax/servlet/http/HttpServletRequest.html">HttpServletRequest</a>
+implementation that returns <code>jsp_precompile</code> for the query string.  I could
+have written a class providing stub implementations for the HttpServletRequest
+methods, but the interface has so many methods that the code to create a
+<a href="http://download.oracle.com/javase/6/docs/api/java/lang/reflect/Proxy.html">JDK dynamic proxy</a>
+implementing the interface is more concise.  Another JDK dynamic proxy
+implements the
+<a href="http://download.oracle.com/javaee/6/api/javax/servlet/http/HttpServletResponse.html">HttpServletResponse</a>
+interface in a similar fashion.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">    private HttpServletRequest createHttpServletRequest() {
+        InvocationHandler handler = new InvocationHandler() {
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (method.getName().equals("getQueryString")) {
+                    return "jsp_precompile";
+                }
+                return null;
+            }
+        };
+
+        return (HttpServletRequest) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class&lt;?&gt;[] { HttpServletRequest.class },
+                handler);
+    }</code></pre>
+</div>
+</div>
+</div>
+</div>
+  </div>
+</article><footer>
+  <h1>Recent Posts</h1>
+  <ul class="posts">
+  
+    <li>
+      <time class="date">2019-03-31</time>
+      &nbsp; <a href="/2019/03/31/graphql-spring-boot-getting-started.html">Getting Started with GraphQL and Spring Boot</a>
+  
+    <li>
+      <time class="date">2012-07-20</time>
+      &nbsp; <a href="/2012/07/20/jsp-jersey-mvc-elresolver.html">Read Model Data In Jersey MVC JSP Templates Without "it."</a>
+  
+    <li>
+      <time class="date">2011-01-03</time>
+      &nbsp; <a href="/2011/01/03/jsp-cross-site-scripting-elresolver.html">ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting</a>
+  
+    <li>
+      <time class="date">2010-12-22</time>
+      &nbsp; <a href="/2010/12/22/jsp-precompile-application-start.html">Compile JSPs On Application Startup</a>
+  
+  </ul>
+
+  <p><a href="/allposts.html">All Posts</a>
+</footer>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="text-right">
+          <small>
+            Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a> on
+            <a href="https://pages.github.com">GitHub Pages</a>.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- At end of document so the page can render while loading JavaScript. -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

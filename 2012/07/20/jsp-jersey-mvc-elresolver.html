@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-7747045-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-7747045-3');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Read Model Data In Jersey MVC JSP Templates Without "it."</title>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- site style -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
+  <link rel="stylesheet" href="/css/spring.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Software Developer's Notebook</a>
+      </div>
+    </nav>
+
+    <div class="row">
+      <div class="col">
+        <article class="post">
+  <header class="post-header">
+    <p class="post-meta"><time class="date">2012-07-20</time></p>
+    <h1 class="post-title">Read Model Data In Jersey MVC JSP Templates Without "it."</h1>
+  </header>
+
+  <div class="post-content">
+    <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Jersey, the JAX-RS reference implementation, includes an
+<a href="https://blogs.oracle.com/sandoz/entry/mvcj">MVC framework</a>
+supporting the rendering of views by JSP templates.  The application passes a
+model object to the framework, where the model object implements properties
+providing the data to render in the JSP template.  Jersey exposes the model
+object to the JSP template as a request attribute named &#8220;it&#8221;.  So to read a
+model property, a JSP template must evaluate an EL expression reading a
+property of this object, for example, <code>${it.propertyName}</code>.</p>
+</div>
+<div class="paragraph">
+<p>In Spring MVC, you don&#8217;t have to write a specific prefix at the start of an EL
+expression to read model data.  The model is a key-value map, and the framework
+exposes every entry of the map as a request attribute.</p>
+</div>
+<div class="paragraph">
+<p>To avoid cluttering JSP templates with &#8220;it.&#8221;, I wrote a
+<a href="https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/ViewableModelELResolver.java">custom ELResolver which exposes model properties as implicit objects</a>,
+allowing a JSP template to read a model property with an EL expression like
+<code>${propertyName}</code>.</p>
+</div>
+<div class="paragraph">
+<p>A
+<a href="https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/ViewableModelELResolverListener.java">custom servlet context listener</a>
+registers the custom ELResolver when the application starts.  To use
+it, define a listener in the <code>web.xml</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="xml" class="language-xml hljs">&lt;listener&gt;
+  &lt;listener-class&gt;com.github.pukkaone.jsp.ViewableModelELResolverListener&lt;/listener-class&gt;
+&lt;/listener&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="details">Details</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The custom ELResolver gets the model object from the request attribute named
+&#8220;it&#8221;, then uses reflection to resolve a name to a property of the object.
+Assuming the requested property name is <em>key</em>, the following steps are tried:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the object is a
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/Map.html">Map</a>,
+then lookup the value from the Map using <em>key</em> as the key.</p>
+</li>
+<li>
+<p>If the object has a method named <em>key</em> with non-void return type, then use
+the return value from calling the method.</p>
+</li>
+<li>
+<p>If the object has a method named `get`<em>key</em> with the first letter of <em>key</em>
+capitalized and non-void return type, then use the return value from
+calling the method.</p>
+</li>
+<li>
+<p>If the object has a field named <em>key</em>, then get the field value.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Finally, if the value acquired from the previous steps is an object implementing
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Callable.html">Callable</a>,
+then use the return value from invoking it.</p>
+</div>
+</div>
+</div>
+  </div>
+</article><footer>
+  <h1>Recent Posts</h1>
+  <ul class="posts">
+  
+    <li>
+      <time class="date">2019-03-31</time>
+      &nbsp; <a href="/2019/03/31/graphql-spring-boot-getting-started.html">Getting Started with GraphQL and Spring Boot</a>
+  
+    <li>
+      <time class="date">2012-07-20</time>
+      &nbsp; <a href="/2012/07/20/jsp-jersey-mvc-elresolver.html">Read Model Data In Jersey MVC JSP Templates Without "it."</a>
+  
+    <li>
+      <time class="date">2011-01-03</time>
+      &nbsp; <a href="/2011/01/03/jsp-cross-site-scripting-elresolver.html">ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting</a>
+  
+    <li>
+      <time class="date">2010-12-22</time>
+      &nbsp; <a href="/2010/12/22/jsp-precompile-application-start.html">Compile JSPs On Application Startup</a>
+  
+  </ul>
+
+  <p><a href="/allposts.html">All Posts</a>
+</footer>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="text-right">
+          <small>
+            Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a> on
+            <a href="https://pages.github.com">GitHub Pages</a>.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- At end of document so the page can render while loading JavaScript. -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

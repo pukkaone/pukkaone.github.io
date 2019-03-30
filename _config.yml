@@ -1,9 +1,0 @@
-markdown: kramdown
-highlighter: pygments
-
-#
-# site configuration
-#
-url: http://pukkaone.github.io
-title: "Software Developer's Notebook"
-author: Chin Huang

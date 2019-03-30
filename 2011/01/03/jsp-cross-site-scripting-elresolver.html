@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-7747045-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-7747045-3');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting</title>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- site style -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
+  <link rel="stylesheet" href="/css/spring.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Software Developer's Notebook</a>
+      </div>
+    </nav>
+
+    <div class="row">
+      <div class="col">
+        <article class="post">
+  <header class="post-header">
+    <p class="post-meta"><time class="date">2011-01-03</time></p>
+    <h1 class="post-title">ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting</h1>
+  </header>
+
+  <div class="post-content">
+    <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="http://en.wikipedia.org/wiki/Cross-site_scripting">Cross-site scripting</a> is a
+computer security vulnerability enabling an attacker to inject malicious code
+into a Web page that will be executed by the Web browser when other users view
+the page.  If your Web application accepts data from the user and then outputs
+that data unaltered in HTML, then it is vulnerable because user-controlled
+data might contain executable code.</p>
+</div>
+<div class="paragraph">
+<p>Since JSP 2.0, EL expressions can appear in the template text:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="html" class="language-html hljs">&lt;h1&gt;Hello, ${user.name}&lt;/h1&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unfortunately, the JSP container does not escape expression values, so if the
+expression contains user-controlled data, then cross-site scripting is
+possible.  JSTL provides a couple of ways to sanitize the output.  The <code>c:out</code>
+tag escapes XML characters by default:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="xml" class="language-xml hljs">&lt;c:out value="${user.name}"/&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, the EL function <code>fn:escapeXml</code> also escapes XML characters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="jsp" class="language-jsp hljs">${fn:escapeXml(user.name)}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The default option should be the safe option.  That&#8217;s a sensible engineering
+principle.  If EL values are escaped by default, then you&#8217;re protected from
+coders who forget to wrap expressions in <code>c:out</code> or <code>fn:escapeXml</code>.</p>
+</div>
+<div class="paragraph">
+<p>Starting with JSP 2.1, a Web application can register a custom
+<a href="http://download.oracle.com/javaee/6/api/javax/el/ELResolver.html">ELResolver</a>.
+I&#8217;m going to present a
+<a href="https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/EscapeXmlELResolver.java">custom ELResolver that escapes EL values</a>,
+allowing you to use EL in JSPs while preventing cross-site scripting.</p>
+</div>
+<div class="paragraph">
+<p>A
+<a href="https://github.com/pukkaone/webappenhance/blob/master/src/main/java/com/github/pukkaone/jsp/EscapeXmlELResolverListener.java">custom servlet context listener</a>
+registers the custom ELResolver when the application starts.  To use
+it, define a listener in the <code>web.xml</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="xml" class="language-xml hljs">&lt;listener&gt;
+  &lt;listener-class&gt;com.github.pukkaone.jsp.EscapeXmlELResolverListener&lt;/listener-class&gt;
+&lt;/listener&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="disable-escaping">Disable Escaping</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you register this custom ELResolver, all EL values will be escaped by
+default.  If you want a JSP to programmatically output HTML, you can resort to
+a
+<a href="http://download.oracle.com/javaee/5/tutorial/doc/bnaou.html">JSP scriptlet</a>
+or
+<a href="http://download.oracle.com/javaee/5/tutorial/doc/bnaov.html">JSP expression</a>,
+unless the application configured <code>scripting-invalid</code> to <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p>Another way uses a custom tag to surround JSP code in which EL values should
+not be escaped:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="jsp" class="language-jsp hljs">&lt;%@ taglib prefix="enhance" uri="http://pukkaone.github.com/jsp" %&gt;
+
+&lt;enhance:out escapeXml="false"&gt;
+  I hope this expression returns safe HTML: ${user.name}
+&lt;/enhance:out&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>escapeXml</code> attribute is <code>true</code> by default.  You must explicitly set it to
+<code>false</code> in the tag to disable escaping.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="details">Details</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The servlet context listener&#8217;s <code>contextInitialized</code> method calls the
+<a href="http://download.oracle.com/javaee/6/api/javax/servlet/jsp/JspApplicationContext.html#addELResolver(javax.el.ELResolver)">JspApplicationContext.addELResolver</a>
+method to register the custom ELResolver.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">    public void contextInitialized(ServletContextEvent event) {
+        JspFactory.getDefaultFactory()
+                .getJspApplicationContext(event.getServletContext())
+                .addELResolver(new EscapeXmlELResolver());
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>addELResolver</code> method inserts the custom ELResolver into a chain of
+standard resolvers.  When evaluating an expression, the JSP container consults
+the chain of resolvers in the following order, stopping at the first resolver
+to succeed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ImplicitObjectELResolver</p>
+</li>
+<li>
+<p><strong>ELResolvers registered by the addELResolver method.</strong></p>
+</li>
+<li>
+<p>MapELResolver</p>
+</li>
+<li>
+<p>ListELResolver</p>
+</li>
+<li>
+<p>ArrayELResolver</p>
+</li>
+<li>
+<p>BeanELResolver</p>
+</li>
+<li>
+<p>ScopedAttributeELResolver</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This presents a slight problem because the custom ELResolver wants to escape
+the value that would have resulted from consulting the chain.  When asked for a
+value, the custom ELResolver invokes the chain of resolvers.  The custom
+ELResolver is itself in the chain of resolvers, so before invoking the chain,
+it sets a flag telling itself to do nothing when its turn in the chain comes
+around.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">    private boolean gettingValue;
+
+    @Override
+    public Object getValue(ELContext context, Object base, Object property)
+        throws NullPointerException, PropertyNotFoundException, ELException
+    {
+        if (gettingValue) {
+            return null;
+        }
+
+        gettingValue = true;
+        Object value = context.getELResolver().getValue(
+                context, base, property);
+        gettingValue = false;
+
+        if (value instanceof String) {
+            value = EscapeXml.escape((String) value);
+        }
+        return value;
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There&#8217;s a resolver in the chain before the custom ELResolver.  This resolver,
+ImplicitObjectELResolver, will be invoked twice.  First, before reaching the
+custom ELResolver, and again when the custom ELResolver invokes the chain.
+Multiple invocations of ImplicitObjectELResolver is harmless because
+ImplicitObjectELResolver had to fail in order for the custom ELResolver to be
+invoked.  When the custom ELResolver invokes the chain, the
+ImplicitObjectELResolver will fail again.</p>
+</div>
+<div class="paragraph">
+<p>A resolver indicates success by setting the <code>propertyResolved</code> property of the
+<code>ELContext</code> to <code>true</code>.  When consulting the chain, one of the resolvers very
+likely set this property to <code>true</code>, so no other resolvers are invoked after
+returning from the custom ELResolver.</p>
+</div>
+</div>
+</div>
+  </div>
+</article><footer>
+  <h1>Recent Posts</h1>
+  <ul class="posts">
+  
+    <li>
+      <time class="date">2019-03-31</time>
+      &nbsp; <a href="/2019/03/31/graphql-spring-boot-getting-started.html">Getting Started with GraphQL and Spring Boot</a>
+  
+    <li>
+      <time class="date">2012-07-20</time>
+      &nbsp; <a href="/2012/07/20/jsp-jersey-mvc-elresolver.html">Read Model Data In Jersey MVC JSP Templates Without "it."</a>
+  
+    <li>
+      <time class="date">2011-01-03</time>
+      &nbsp; <a href="/2011/01/03/jsp-cross-site-scripting-elresolver.html">ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting</a>
+  
+    <li>
+      <time class="date">2010-12-22</time>
+      &nbsp; <a href="/2010/12/22/jsp-precompile-application-start.html">Compile JSPs On Application Startup</a>
+  
+  </ul>
+
+  <p><a href="/allposts.html">All Posts</a>
+</footer>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="text-right">
+          <small>
+            Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a> on
+            <a href="https://pages.github.com">GitHub Pages</a>.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- At end of document so the page can render while loading JavaScript. -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

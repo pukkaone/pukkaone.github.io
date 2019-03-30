@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-7747045-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-7747045-3');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Build Number From Git Repository</title>
+
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- site style -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
+  <link rel="stylesheet" href="/css/spring.css">
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Software Developer's Notebook</a>
+      </div>
+    </nav>
+
+    <div class="row">
+      <div class="col">
+        <article class="post">
+  <header class="post-header">
+    <p class="post-meta"><time class="date">2010-12-19</time></p>
+    <h1 class="post-title">Build Number From Git Repository</h1>
+  </header>
+
+  <div class="post-content">
+    <div class="paragraph">
+<p>A build number is an identifying number assigned to a software release.  The
+software displays the build number to the user in some fashion, such as in an
+About dialog.  Subsequent releases should have increasing build numbers (but
+the build numbers don&#8217;t have to be contiguous), so you can say to a customer,
+"If you have build number <strong>N</strong> or higher, then you have the fix to that bug."</p>
+</div>
+<div class="paragraph">
+<p>A commit to <a href="http://subversion.apache.org/">Subversion</a> increments the
+repository revision number which identifies the state of the repository after
+applying the changes.  If your source code is in Subversion, an obvious choice
+for the build number is the repository revision number checked out to build the
+release.</p>
+</div>
+<div class="paragraph">
+<p>Deriving a build number from <a href="http://git-scm.com/">Git</a> is not so obvious.  The
+SHA-1 hash Git uses to identify each commit does not have a naturally ordering.
+You can&#8217;t tell just by looking at the SHA-1 hashes of two commits which commit
+comes after the other.  So using the SHA-1 hash as the build number doesn&#8217;t
+make sense.</p>
+</div>
+<div class="paragraph">
+<p>I&#8217;m going to outline a scheme using the
+<a href="http://www.kernel.org/pub/software/scm/git/docs/git-describe.html">git describe</a>
+command, which counts how many commits are traversed to reach a tag.  Create a
+tag pointing to some commit in the history.  A likely candidate is the first
+commit in the repository.  The build number is the number of commits between
+the current commit and the tag.  To guarantee an increasing build number, all
+these conditions must be satisfied:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Make all releases from the same Git repository.</p>
+</li>
+<li>
+<p>Make all releases from the same branch.</p>
+</li>
+<li>
+<p>Do not rewrite history.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Create a tag named <code>build</code> pointing to the first commit in the repository:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>% git tag -a -m "For calculating build number" build `git rev-list HEAD | tail -1`</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>git describe</code> command by default searches to the nearest tag.  Use the
+<code>--match</code> option to specify the tag name.  Trying the command, you see your
+build script needs to extract the build number from the output (<code>12</code> in the
+example):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>% git describe --match build
+build-12-g53e5502</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This <a href="http://ant.apache.org/">Ant</a> task extracts the build number into the
+<code>BUILD_NUMBER</code> property:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="xml" class="language-xml hljs">&lt;exec executable="git" outputproperty="BUILD_NUMBER"&gt;
+  &lt;arg value="describe"/&gt;
+  &lt;arg value="--match"/&gt;
+  &lt;arg value="build"/&gt;
+  &lt;redirector&gt;
+    &lt;outputfilterchain&gt;
+      &lt;tokenfilter&gt;
+        &lt;replaceregex pattern="^[^-]+-" replace=""/&gt;
+        &lt;replaceregex pattern="-.+$" replace=""/&gt;
+      &lt;/tokenfilter&gt;
+   &lt;/outputfilterchain&gt;
+ &lt;/redirector&gt;
+&lt;/exec&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This <a href="http://cmake.org/">CMake</a> script parses the build number into the
+<code>BUILD_NUMBER</code> variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="cmake" class="language-cmake hljs">find_package(Git)
+if(GIT_FOUND)
+    execute_process(
+            COMMAND ${GIT_EXECUTABLE} describe --match build
+            OUTPUT_VARIABLE DESCRIBE_BUILD
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX MATCH "[0-9]+" BUILD_NUMBER ${DESCRIBE_BUILD})
+endif()</code></pre>
+</div>
+</div>
+  </div>
+</article><footer>
+  <h1>Recent Posts</h1>
+  <ul class="posts">
+  
+    <li>
+      <time class="date">2019-03-31</time>
+      &nbsp; <a href="/2019/03/31/graphql-spring-boot-getting-started.html">Getting Started with GraphQL and Spring Boot</a>
+  
+    <li>
+      <time class="date">2012-07-20</time>
+      &nbsp; <a href="/2012/07/20/jsp-jersey-mvc-elresolver.html">Read Model Data In Jersey MVC JSP Templates Without "it."</a>
+  
+    <li>
+      <time class="date">2011-01-03</time>
+      &nbsp; <a href="/2011/01/03/jsp-cross-site-scripting-elresolver.html">ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting</a>
+  
+    <li>
+      <time class="date">2010-12-22</time>
+      &nbsp; <a href="/2010/12/22/jsp-precompile-application-start.html">Compile JSPs On Application Startup</a>
+  
+  </ul>
+
+  <p><a href="/allposts.html">All Posts</a>
+</footer>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="text-right">
+          <small>
+            Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a> on
+            <a href="https://pages.github.com">GitHub Pages</a>.
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- At end of document so the page can render while loading JavaScript. -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
