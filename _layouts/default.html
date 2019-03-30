@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <!-- site style -->
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/atom-one-dark-reasonable.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
   <link rel="stylesheet" href="{{ '/css/spring.css' | prepend: site.baseurl }}">
   <link rel="stylesheet" href="{{ '/css/site.css' | prepend: site.baseurl }}">
 </head>
@@ -34,35 +34,18 @@
 
     <div class="row">
       <div class="col">
-        <div class="content">
-          {{ content }}
-        </div>
+        {{ content }}
       </div>
     </div>
 
     <div class="row">
       <div class="col">
-        <footer>
-{%- if page.hide_recent_posts != true -%}
-          <h1>Recent Posts</h1>
-          <ul class="posts">
-          {% for post in site.posts limit:4 %}
-            <li>
-              <time class="date">{{ post.date | date: '%Y-%m-%d' }}</time>
-              &raquo; <a href="{{ post.url }}">{{ post.title }}</a>
-          {% endfor %}
-          </ul>
-
-          <p><a href="{{ '/allposts.html' | prepend: site.baseurl }}">All Posts</a>
-{%- endif -%}
-
-          <div class="text-right">
-            <small>
-              Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a> on
-              <a href="https://pages.github.com">GitHub Pages</a>.
-            </small>
-          </div>
-        </footer>
+        <div class="text-right">
+          <small>
+            Powered by <a href="https://github.com/jekyll/jekyll">Jekyll</a> on
+            <a href="https://pages.github.com">GitHub Pages</a>.
+          </small>
+        </div>
       </div>
     </div>
   </div>

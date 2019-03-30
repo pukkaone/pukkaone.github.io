@@ -1,0 +1,12 @@
+<footer>
+  <h1>Recent Posts</h1>
+  <ul class="posts">
+  {% for post in site.posts limit:4 %}
+    <li>
+      <time class="date">{{ post.date | date: '%Y-%m-%d' }}</time>
+      &nbsp; <a href="{{ post.url }}">{{ post.title }}</a>
+  {% endfor %}
+  </ul>
+
+  <p><a href="{{ '/allposts.html' | prepend: site.baseurl }}">All Posts</a>
+</footer>
