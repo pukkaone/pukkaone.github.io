@@ -1,8 +1,16 @@
-highlighter: pygments
-
-#
-# site configuration
-#
+# Site settings
+# These are used to personalize your new site. If you look in the HTML files,
+# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
+# You can create any custom variable you would like, and they will be accessible
+# in the templates via {{ site.myvariable }}.
 url: https://pukkaone.github.io
 title: "Software Developer's Notebook"
 author: Chin Huang
+
+asciidoctor:
+  attributes:
+    - icons=font
+    - source-highlighter=highlight.js
+
+include:
+  - .nojekyll

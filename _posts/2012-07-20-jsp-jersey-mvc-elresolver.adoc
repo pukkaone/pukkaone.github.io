@@ -1,7 +1,4 @@
----
-layout: post
-title: Read Model Data In Jersey MVC JSP Templates Without "it."
----
+= Read Model Data In Jersey MVC JSP Templates Without "it."
 
 Jersey, the JAX-RS reference implementation, includes an
 https://blogs.oracle.com/sandoz/entry/mvcj[MVC framework]
@@ -34,7 +31,7 @@ it, define a listener in the `web.xml` file:
 ----
 
 
-=== Details
+== Details
 
 The custom ELResolver gets the model object from the request attribute named
 "`it`", then uses reflection to resolve a name to a property of the object.

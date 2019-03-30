@@ -1,7 +1,4 @@
----
-layout: post
-title: Build Number From Git Repository
----
+= Build Number From Git Repository
 
 A build number is an identifying number assigned to a software release.  The
 software displays the build number to the user in some fashion, such as in an

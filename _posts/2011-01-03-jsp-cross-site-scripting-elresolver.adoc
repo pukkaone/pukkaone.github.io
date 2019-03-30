@@ -1,7 +1,4 @@
----
-layout: post
-title: ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting
----
+= ELResolver Escapes JSP EL Values To Prevent Cross-Site Scripting
 
 http://en.wikipedia.org/wiki/Cross-site_scripting[Cross-site scripting] is a
 computer security vulnerability enabling an attacker to inject malicious code
@@ -57,7 +54,7 @@ it, define a listener in the `web.xml` file:
 ----
 
 
-=== Disable Escaping
+== Disable Escaping
 
 When you register this custom ELResolver, all EL values will be escaped by
 default.  If you want a JSP to programmatically output HTML, you can resort to
@@ -83,7 +80,7 @@ The `escapeXml` attribute is `true` by default.  You must explicitly set it to
 `false` in the tag to disable escaping.
 
 
-=== Details
+== Details
 
 The servlet context listener's `contextInitialized` method calls the
 http://download.oracle.com/javaee/6/api/javax/servlet/jsp/JspApplicationContext.html#addELResolver(javax.el.ELResolver)[JspApplicationContext.addELResolver]

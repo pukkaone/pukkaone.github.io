@@ -1,7 +1,4 @@
----
-layout: post
-title: Compile JSPs On Application Startup
----
+= Compile JSPs On Application Startup
 
 The first request to a JSP typically has a processing delay as the JSP
 container compiles the JSP.  Specifically, the container generates Java source
@@ -36,7 +33,7 @@ it, define a listener in the `web.xml` file:
 ----
 
 
-=== Details
+== Details
 
 The `JspCompileListener` class implements the
 http://download.oracle.com/javaee/6/api/javax/servlet/ServletContextListener.html[ServletContextListener]
