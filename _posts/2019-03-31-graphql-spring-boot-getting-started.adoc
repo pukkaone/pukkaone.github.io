@@ -1,0 +1,125 @@
+= Getting Started with GraphQL and Spring Boot
+
+In 2019, I reinvented https://www.corba.org/[Common Object Request Brokerage Architecture (CORBA)].
+If you developed a distributed system in 1997, you might have built servers that accept network
+requests by CORBA.
+You defined the types and operations implemented by a server in Interface Definition Language (IDL).
+An https://docs.oracle.com/javase/8/docs/technotes/guides/idl/GShome.html[IDL compiler] generated
+skeleton code for a server.
+As an application developer, you added business logic to the skeleton code to complete the server
+implementation.
+
+I wrote https://pukkaone.github.io/grapid/[Grapid], a framework for building
+https://graphql.org/[GraphQL] servers in Java.
+You define the types and operations implemented by a server in GraphQL schema definition language.
+The framework generates code to connect GraphQL to Java types.
+As an application developer, you only need to implement the business logic for the API.
+
+This article explains how to build a GraphQL server in Java with Spring Boot.
+
+At https://start.spring.io/[Spring Initializr], generate a project with these options:
+
+|===
+| Option | Value
+
+| Project | Maven Project
+| Language | Java
+| Spring Boot | 2.1.3
+| Package Name | com.example.demo
+| Java Version | 11
+|===
+
+Edit the `pom.xml` file, and add this Spring Boot starter which auto-configures a GraphQL server:
+
+[source,xml]
+----
+<dependency>
+  <groupId>com.github.pukkaone</groupId>
+  <artifactId>grapid-web-spring-boot-starter</artifactId>
+  <version>0.3.0</version>
+</dependency>
+----
+
+Also add this Maven plugin which compiles GraphQL schema definition files to Java source files:
+
+[source,xml]
+----
+<plugin>
+  <groupId>com.github.pukkaone</groupId>
+  <artifactId>grapid-maven-plugin</artifactId>
+  <version>0.3.0</version>
+  <configuration>
+    <packagePrefix>com.example.demo.graphql</packagePrefix> // <1>
+  </configuration>
+  <executions>
+    <execution>
+      <goals>
+        <goal>compile</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+----
+<1> The compiler generates Java classes under this Java package.
+
+The framework enforces a convention prescribing where you put GraphQL schema definition files and
+Java classes.
+Create resources directory `src/main/resources/graphql/v2018_12_31/`.
+In this example, `v2018_12_31` identifies an API version.
+An API version must be a valid Java identifier and not a Java keyword.
+
+Add this GraphQL schema definition file in the directory.
+By convention, GraphQL schema definition file names end with the extension `.graphql`.
+
+.Author.graphql
+[source,graphql]
+----
+type Author {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  author(id: ID!): Author
+}
+----
+
+The GraphQL schema defines the root object type Query.
+The compiler appends the suffix `Resolver` to this root object type name to derive the Java class
+name QueryResolver.
+As an application developer, you must implement the QueryResolver class.
+By convention, this class is in the Java package named _packagePrefix_``.resolver`` where
+_packagePrefix_ is the property configured in the Maven plugin.
+
+.QueryResolver.java
+[source,java]
+----
+package com.example.demo.graphql.resolver;
+
+import com.example.demo.graphql.v2018_12_31.type.Author; // <1>
+import org.springframework.stereotype.Component;
+
+@Component
+public class QueryResolver {
+
+  public Author author(String id) { // <2>
+    return Author.builder()
+        .id(id)
+        .name("NAME")
+        .build();
+  }
+}
+----
+<1> The compiler generated the simple Java data class Author from the GraphQL object type Author.
+<2> The compiler translated this Java method signature from the field `author` of the GraphQL
+    root object type Query.
+
+Run the application:
+
+[source,sh]
+----
+./mvnw spring-boot:run
+----
+
+In https://github.com/prisma/graphql-playground[GraphQL Playground], connect to
+`http://localhost:8080/graphql/v2018_12_31` to send a GraphQL query to the server.
